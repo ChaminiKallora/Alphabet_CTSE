@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'imageUploadAPI.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:getflutter/getflutter.dart';
 
 class ImageUploadPage extends StatefulWidget {
@@ -20,10 +21,27 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
   String _letter;
 
   final GlobalKey<FormState> _form_key = GlobalKey<FormState>();
+  FocusNode imageUploadFocusNode = new FocusNode();
 
   Widget _buildFieldName() {
+    //designing text field of image name
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Image Name'),
+      focusNode: imageUploadFocusNode,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Color.fromARGB(180, 255, 255, 255),
+        labelText: 'Image Name',
+        labelStyle: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 25,
+            fontStyle: FontStyle.italic,
+            color:
+                imageUploadFocusNode.hasFocus ? Colors.black87 : Colors.black),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueAccent),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
       keyboardType: TextInputType.text,
       validator: (String image_name) {
         if (image_name.isEmpty) {
@@ -97,12 +115,12 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       decoration: BoxDecoration(
         color: Colors.white60,
         image: DecorationImage(
-          image: AssetImage("assets/images/abcd.jpg"),
-          fit: BoxFit.cover,
+          image: AssetImage("assets/images/rainbow.jpg"),
+          fit: BoxFit.fill,
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(80, 60, 50, 0),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
@@ -111,68 +129,66 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
               //Navigator.pop(context);
             },
           ),
-          title: Text('Edit Image'),
+          title: Text('Add Image'),
         ),
         body: Builder(
             builder: (context) => Container(
-              color: Colors.transparent,
-                  padding: EdgeInsets.only(
-                    top: 30,
-                    bottom: 20,
-                    left: 40,
-                    right: 40,
-                  ),
-                  child: Form(
-                    key: _form_key,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(height: 30.0),
-                        _buildFieldImageUrl(),
-                        SizedBox(height: 30.0),
-                        _buildFieldName(),
-                        SizedBox(height: 30.0),
-                        SizedBox(height: 30.0),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              RaisedButton(
-                                color: Colors.blue,
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                elevation: 4.0,
-                                splashColor: Colors.blueGrey,
-                                child: Text(
-                                  'Cancel',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.0),
-                                ),
+                padding: EdgeInsets.only(
+                  top: 30,
+                  bottom: 20,
+                  left: 40,
+                  right: 40,
+                ),
+                child: Form(
+                  key: _form_key,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 30.0),
+                      _buildFieldImageUrl(),
+                      SizedBox(height: 30.0),
+                      _buildFieldName(),
+                      SizedBox(height: 30.0),
+                      SizedBox(height: 30.0),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            RaisedButton(
+                              color: Colors.blue,
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              elevation: 4.0,
+                              splashColor: Colors.blueGrey,
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16.0),
                               ),
-                              SizedBox(width: 30.0),
-                              RaisedButton(
-                                color: Colors.blue,
-                                onPressed: () {
-                                  if (!_form_key.currentState.validate()) {
-                                    return;
-                                  }
-                                  _form_key.currentState.save();
+                            ),
+                            SizedBox(width: 30.0),
+                            RaisedButton(
+                              color: Colors.blue,
+                              onPressed: () {
+                                if (!_form_key.currentState.validate()) {
+                                  return;
+                                }
+                                _form_key.currentState.save();
 
-                                  uploadPicture(context);
-                                },
-                                elevation: 4.0,
-                                splashColor: Colors.blueGrey,
-                                child: Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.0),
-                                ),
+                                uploadPicture(context);
+                              },
+                              elevation: 4.0,
+                              splashColor: Colors.blueGrey,
+                              child: Text(
+                                'Submit',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16.0),
                               ),
-                            ]),
-                      ],
-                    ),
-                  )
-                )),
+                            ),
+                          ]),
+                    ],
+                  ),
+                ))),
       ),
     );
   }
