@@ -29,12 +29,11 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       focusNode: imageUploadFocusNode,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Color.fromARGB(180, 255, 255, 255),
+        fillColor: Color.fromARGB(200, 255, 255, 255),
         labelText: 'Image Name',
         labelStyle: TextStyle(
-            fontWeight: FontWeight.w800,
-            fontSize: 25,
-            fontStyle: FontStyle.italic,
+            fontFamily: 'FredokaOne-Regular',
+            fontSize: 20,
             color:
                 imageUploadFocusNode.hasFocus ? Colors.black87 : Colors.black),
         focusedBorder: OutlineInputBorder(
@@ -129,7 +128,10 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
               //Navigator.pop(context);
             },
           ),
-          title: Text('Add Image'),
+          title: Text(
+            'Add Image',
+            style: TextStyle(fontFamily: 'PermanentMarker'),
+          ),
         ),
         body: Builder(
             builder: (context) => Container(
