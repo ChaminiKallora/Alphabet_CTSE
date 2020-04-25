@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "376777753766",
+    "firebase_url": "https://ctse-abcd.firebaseio.com",
+    "project_id": "ctse-abcd",
+    "storage_bucket": "ctse-abcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376777753766:android:a9b24c292f01e39596e067",
+        "android_client_info": {
+          "package_name": "com.example.abcd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376777753766-fjico1om28tuqektjlen4qvickqdv3dj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANj4q6RHJu2nCaJss1LibgVIEo522Ft80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376777753766-fjico1om28tuqektjlen4qvickqdv3dj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
