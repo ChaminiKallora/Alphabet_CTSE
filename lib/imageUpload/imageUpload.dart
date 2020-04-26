@@ -6,19 +6,25 @@ class ImageUpload{
   String alphabetLetter;
   String name;
   String imageUrl;
+  String color;
   DocumentReference reference;
 
-  ImageUpload({this.name});
+  ImageUpload({this.name, this.imageUrl, this.color});
+
+  void setAlphabetLetter(String letter){
+    this.alphabetLetter = letter;
+  }
 
   ImageUpload.fromMap(Map<String, dynamic> map, {this.reference}){
-    alphabetLetter = map["alphabetLetter"];
+    alphabetLetter = map["alphabet_letter"];
     name = map["name"];
-    imageUrl = map["imageUrl"];
+    imageUrl = map["image_url"];
+    color = map["word_color"];
   }
 
   ImageUpload.fromSnapshot(DocumentSnapshot snapshot): this.fromMap(snapshot.data, reference: snapshot.reference);
 
   toJson(){
-    return {'name': name};
+    return {'name': name, 'alphabet_letter':alphabetLetter, 'image_url':imageUrl, 'word_color':color};
   }
 }

@@ -1,3 +1,4 @@
+import 'package:abcd/imageUpload/imageUploadPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'imageUpload.dart';
 
@@ -6,9 +7,17 @@ class ImageUploadAPI {
     return Firestore.instance.collection("user_uploaded_images").snapshots();
   }
 
-  addImage(String name){
-    ImageUpload imageUpload = new ImageUpload(name: name);
-    print("print" + name);
+  addImage(ImageUpload imageUploadObj){
+    ImageUpload imageUpload = new ImageUpload(
+      name: imageUploadObj.name,
+      imageUrl : imageUploadObj.imageUrl,
+      color: imageUploadObj.color 
+    );
+    
+    imageUpload.setAlphabetLetter(imageUploadObj.alphabetLetter);
+
+    print("print" + imageUploadObj.name);
+    print("print" + imageUploadObj.alphabetLetter);
     try{
       Firestore.instance.runTransaction(
             (Transaction transaction) async{

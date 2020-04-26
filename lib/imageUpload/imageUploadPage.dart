@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'imageUploadAPI.dart';
+import 'imageUpload.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:getflutter/getflutter.dart';
 
@@ -29,18 +30,21 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
   String _letter;
 
   //user chosen color
-  String colorOfWord; 
+  String _colorOfWord; 
+
+  //get if the image upload is success
+  bool _success = true;
 
   //global key for the form
   final GlobalKey<FormState> _form_key = GlobalKey<FormState>();
 
   //node to focus on a particular field
-  FocusNode imageUploadFocusNode = new FocusNode();
+  FocusNode _imageUploadFocusNode = new FocusNode();
 
   Widget _buildFieldName() {
     //designing text field of image name
     return TextFormField(
-      focusNode: imageUploadFocusNode,
+      focusNode: _imageUploadFocusNode,
       textAlign: TextAlign.center,
       decoration: InputDecoration(
         filled: true,
@@ -50,7 +54,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
             fontFamily: 'FredokaOne-Regular', //imported font family
             fontSize: 20,
             color:
-                imageUploadFocusNode.hasFocus ? Colors.black87 : Colors.black),
+                _imageUploadFocusNode.hasFocus ? Colors.black87 : Colors.black),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blueAccent),
           borderRadius: BorderRadius.circular(15),
@@ -67,7 +71,6 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
         //after saved
         _name = image_name;
         _letter = image_name[0];
-        print('Image letter' + _letter);
       },
     );
   }
@@ -95,7 +98,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       hint: Text('Color of the word'),
       onChanged: (String newColorOfWord) {
         setState(() {
-          colorOfWord = newColorOfWord;//change the color on change
+          _colorOfWord = newColorOfWord;//change the color on change
         });
       },
       items: _colorsList.map((String color) {
@@ -104,7 +107,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           child: Text(color),
         );
       }).toList(),
-      value: colorOfWord,
+      value: _colorOfWord,
       iconSize: 24,
       elevation: 16,
       icon: Icon(Icons.arrow_downward, color: Colors.black,),
@@ -114,10 +117,9 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           color: Colors.black), //imported font family
       underline: Container(
         height: 5,
-        color: getColor(colorOfWord),//change color according to the user selectedS
+        color: getColor(_colorOfWord),//change color according to the user selectedS
       ),
     );
-    
   }
 
   //manage the design of the upload image
@@ -150,31 +152,48 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     setState(() {
       _image = image;
       _firebase_image_url = _image.toString();
-      print('image path $_image');
     });
   }
 
   //get the image url after saving it to the firebase storage.
   Future uploadPicture(BuildContext context) async {
+    //get the time to name the uploding images
     var getTimeAsKey = new DateTime.now();
 
+    //create a folder to store user uploaded images
     final StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child("user_uploaded_images");
 
+    //give a name to the uploading image
     final StorageUploadTask uploadTask = firebaseStorageRef
         .child(getTimeAsKey.toString() + ".jpg")
         .putFile(_image);
 
+    //get the uploaded image url
     var image_url = await (await uploadTask.onComplete).ref.getDownloadURL();
     _firebase_image_url = image_url.toString();
 
-    imageUploadAPI.addImage(_firebase_image_url);
+    //upload the image to firebase storage
+    imageUploadAPI.addImage(image_url);
 
+    //success msg
     setState(() {
-      print("Profile Piscture uploaded");
+      print("Profile Picture uploaded");
+      _success = true;
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Profile Picture Uploaded')));
     });
+  }
+
+  void saveToDatabase(){
+    ImageUpload imageUpload = new ImageUpload();
+
+    imageUpload.name = _name;
+    imageUpload.alphabetLetter = _letter;
+    imageUpload.color = _colorOfWord;
+    imageUpload.imageUrl = _firebase_image_url;
+
+    imageUploadAPI.addImage(imageUpload);
   }
 
   @override
@@ -216,6 +235,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
+                      //the form 
                       SizedBox(height: 30.0),
                       _buildFieldImageUrl(),
                       SizedBox(height: 30.0),
@@ -263,6 +283,9 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                                 _form_key.currentState.save();
 
                                 uploadPicture(context);
+
+                                if(_success == true)
+                                  saveToDatabase();
                               },
                               elevation: 4.0,
                               splashColor: Colors.blueGrey,
