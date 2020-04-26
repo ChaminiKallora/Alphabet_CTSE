@@ -13,26 +13,41 @@ class ImageUploadPage extends StatefulWidget {
 }
 
 class _ImgeUploadPageState extends State<ImageUploadPage> {
+  //create an object from imageUploadAPI class
   ImageUploadAPI imageUploadAPI = new ImageUploadAPI();
+
+  //to store the image temporary
   File _image;
-  String _firebase_image_url =
-      "https://images.unsplash.com/photo-1502164980785-f8aa41d53611?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60";
+
+  //the url of uploaded iamge
+  String _firebase_image_url;
+
+  //nam of the image
   String _name;
+
+  //first letter of the image
   String _letter;
 
+  //user chosen color
+  String colorOfWord; 
+
+  //global key for the form
   final GlobalKey<FormState> _form_key = GlobalKey<FormState>();
+
+  //node to focus on a particular field
   FocusNode imageUploadFocusNode = new FocusNode();
 
   Widget _buildFieldName() {
     //designing text field of image name
     return TextFormField(
       focusNode: imageUploadFocusNode,
+      textAlign: TextAlign.center,
       decoration: InputDecoration(
         filled: true,
         fillColor: Color.fromARGB(200, 255, 255, 255),
         labelText: 'Image Name',
         labelStyle: TextStyle(
-            fontFamily: 'FredokaOne-Regular',
+            fontFamily: 'FredokaOne-Regular', //imported font family
             fontSize: 20,
             color:
                 imageUploadFocusNode.hasFocus ? Colors.black87 : Colors.black),
@@ -44,11 +59,12 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       keyboardType: TextInputType.text,
       validator: (String image_name) {
         if (image_name.isEmpty) {
-          return 'Image Name is Required';
+          return 'Image Name is Required'; //error message if the name of the image is empty
         }
         return null;
       },
       onSaved: (String image_name) {
+        //after saved
         _name = image_name;
         _letter = image_name[0];
         print('Image letter' + _letter);
@@ -56,6 +72,55 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     );
   }
 
+  //manage dopdown list
+  Widget _buildDropDownListOfColor() {
+    //drop down list
+    var _colorsList = ['blue', 'red', 'green', 'yellow', 'black'];
+
+    //to change the underline color
+    Color getColor(colorOfWord) {
+      if (colorOfWord == 'blue')
+        return Colors.blue;
+      else if (colorOfWord == 'red')
+        return Colors.red;
+      else if (colorOfWord == 'green')
+        return Colors.green;
+      else if (colorOfWord == 'yellow')
+        return Colors.yellow;
+      else if (colorOfWord == 'black') return Colors.black;
+    }
+
+    return DropdownButton<String>(
+      isExpanded: false,
+      hint: Text('Color of the word'),
+      onChanged: (String newColorOfWord) {
+        setState(() {
+          colorOfWord = newColorOfWord;//change the color on change
+        });
+      },
+      items: _colorsList.map((String color) {
+        return new DropdownMenuItem<String>(
+          value: color,
+          child: Text(color),
+        );
+      }).toList(),
+      value: colorOfWord,
+      iconSize: 24,
+      elevation: 16,
+      icon: Icon(Icons.arrow_downward, color: Colors.black,),
+      style: TextStyle(
+        fontSize: 20,
+          fontFamily: 'FredokaOne-Regular',
+          color: Colors.black), //imported font family
+      underline: Container(
+        height: 5,
+        color: getColor(colorOfWord),//change color according to the user selectedS
+      ),
+    );
+    
+  }
+
+  //manage the design of the upload image
   Widget _buildFieldImageUrl() {
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Align(
@@ -64,10 +129,12 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           onTap: () => getImage(),
           child: (_image != null)
               ? SizedBox(
+                  //if the iamge is already chosen
                   width: 200.0,
-                  height: 200.0,
+                  height: 250.0,
                   child: Image.file(_image, fit: BoxFit.fill))
               : Image.network(
+                  //if the image is not already chosen
                   "https://firebasestorage.googleapis.com/v0/b/ctse-abcd.appspot.com/o/camera.png?alt=media&token=b3a743aa-c361-4b36-8ade-345e126a12fd",
                   fit: BoxFit.fill,
                 ),
@@ -76,6 +143,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     ]));
   }
 
+  //take the image from the gallery
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
@@ -86,6 +154,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     });
   }
 
+  //get the image url after saving it to the firebase storage.
   Future uploadPicture(BuildContext context) async {
     var getTimeAsKey = new DateTime.now();
 
@@ -114,12 +183,12 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       decoration: BoxDecoration(
         color: Colors.white60,
         image: DecorationImage(
-          image: AssetImage("assets/images/rainbow.jpg"),
+          image: AssetImage("assets/images/rainbow.jpg"), //background image
           fit: BoxFit.fill,
         ),
       ),
       child: Scaffold(
-        backgroundColor: Color.fromARGB(80, 60, 50, 0),
+        backgroundColor: Color.fromARGB(150, 180, 170, 255),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
@@ -130,7 +199,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           ),
           title: Text(
             'Add Image',
-            style: TextStyle(fontFamily: 'PermanentMarker'),
+            style:
+                TextStyle(fontFamily: 'PermanentMarker'), //imported font family
           ),
         ),
         body: Builder(
@@ -151,12 +221,19 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                       SizedBox(height: 30.0),
                       _buildFieldName(),
                       SizedBox(height: 30.0),
+                      _buildDropDownListOfColor(),
+                      SizedBox(height: 30.0),
                       SizedBox(height: 30.0),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             RaisedButton(
-                              color: Colors.blue,
+                              color: Colors.yellow[400],
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 24.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(color: Colors.blueAccent)),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -165,12 +242,20 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                               child: Text(
                                 'Cancel',
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 16.0),
+                                  color: Colors.black,
+                                  fontSize: 16.0,
+                                  fontFamily: 'FredokaOne-Regular',
+                                ),
                               ),
                             ),
                             SizedBox(width: 30.0),
                             RaisedButton(
-                              color: Colors.blue,
+                              color: Colors.lightBlueAccent,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 16.0, horizontal: 24.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(color: Colors.blueAccent)),
                               onPressed: () {
                                 if (!_form_key.currentState.validate()) {
                                   return;
@@ -184,7 +269,10 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                               child: Text(
                                 'Submit',
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 16.0),
+                                  color: Colors.black,
+                                  fontSize: 16.0,
+                                  fontFamily: 'FredokaOne-Regular',
+                                ),
                               ),
                             ),
                           ]),
