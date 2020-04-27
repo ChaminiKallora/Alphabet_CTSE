@@ -1,5 +1,10 @@
 import 'package:abcd/imageUpload/imageListView.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+// var routes = <String, WidgetBuilder>{
+//   "/ListImageUpload" : (BuildContext context) => ImageListView(),
+// };
 
 void main() => runApp(MyApp());
 
@@ -13,6 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: ABCDWelcomeSplashScreen(), //call the splash screen
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -24,8 +30,16 @@ class ABCDWelcomeSplashScreen extends StatefulWidget {
 }
 
 //splash screen
-class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen> {
-  bool show = false;
+class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen>{
+  //route
+  var route = new MaterialPageRoute(builder: (BuildContext context) => new ImageListView(), );
+
+  void initState(){
+    super.initState();
+    Timer(Duration(seconds: 5), () =>  Navigator.of(context).push(route));//direct to the ImageListView Page after 5 seconds
+  }
+
+  //build the splash screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +59,7 @@ class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen> {
               child: AnimatedCrossFade(
                 alignment: Alignment.center,
                 firstChild: Container(
-                  color: Colors.transparent,
+                 // color: Colors.transparent,
                   child: CircularProgressIndicator(),
                   height: 200,
                   width: 200,
@@ -75,17 +89,11 @@ class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen> {
                                 color: Colors.pink),
                           ),
                           onPressed: () {
-                            //goes to the list page
-                            var route = new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new ImageListView(),
-                            );
-                            Navigator.of(context).push(route);
                           }),
                     ],
                   ),
                 ),
-                crossFadeState: CrossFadeState.showSecond,
+                crossFadeState: CrossFadeState.showSecond, //display the second child
                 duration: Duration(milliseconds: 2000),
               ),
             ),
