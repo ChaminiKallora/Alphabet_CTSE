@@ -25,6 +25,6 @@ class ImageUpload{
   ImageUpload.fromSnapshot(DocumentSnapshot snapshot): this.fromMap(snapshot.data, reference: snapshot.reference);
 
   toJson(){
-    return {'name': name, 'alphabet_letter':alphabetLetter, 'image_url':imageUrl, 'word_color':color};
+    return {'alphabet_letter':alphabetLetter, 'name': name, 'image_url':imageUrl, 'word_color':color};
   }
 }

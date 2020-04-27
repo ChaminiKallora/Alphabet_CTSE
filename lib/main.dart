@@ -1,3 +1,4 @@
+import 'package:abcd/imageUpload/imageListView.dart';
 import 'package:abcd/imageUpload/imageUploadPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ImageUploadPage(),
+      home: ImageListView(),
     );
   }
 }

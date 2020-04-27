@@ -1,5 +1,6 @@
 import 'package:abcd/imageUpload/imageUploadPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'imageUpload.dart';
 
 class ImageUploadAPI {
@@ -27,8 +28,10 @@ class ImageUploadAPI {
               .setData(imageUpload.toJson());
         },
       );
+      
+      return true;
     } catch(e){
-      print(e.toString());
+      print('error - add' + e.toString());
     }
   }
 

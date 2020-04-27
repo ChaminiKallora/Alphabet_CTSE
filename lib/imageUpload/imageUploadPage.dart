@@ -30,7 +30,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
   String _letter;
 
   //user chosen color
-  String _colorOfWord; 
+  String _colorOfWord;
 
   //get if the image upload is success
   bool _success = true;
@@ -98,7 +98,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       hint: Text('Color of the word'),
       onChanged: (String newColorOfWord) {
         setState(() {
-          _colorOfWord = newColorOfWord;//change the color on change
+          _colorOfWord = newColorOfWord; //change the color on change
         });
       },
       items: _colorsList.map((String color) {
@@ -110,14 +110,18 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       value: _colorOfWord,
       iconSize: 24,
       elevation: 16,
-      icon: Icon(Icons.arrow_downward, color: Colors.black,),
+      icon: Icon(
+        Icons.arrow_downward,
+        color: Colors.black,
+      ),
       style: TextStyle(
-        fontSize: 20,
+          fontSize: 20,
           fontFamily: 'FredokaOne-Regular',
           color: Colors.black), //imported font family
       underline: Container(
         height: 5,
-        color: getColor(_colorOfWord),//change color according to the user selectedS
+        color: getColor(
+            _colorOfWord), //change color according to the user selectedS
       ),
     );
   }
@@ -185,7 +189,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     });
   }
 
-  void saveToDatabase(){
+  //save ti db by calling api class
+  Future saveToDatabase() async{ 
     ImageUpload imageUpload = new ImageUpload();
 
     imageUpload.name = _name;
@@ -193,7 +198,12 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     imageUpload.color = _colorOfWord;
     imageUpload.imageUrl = _firebase_image_url;
 
-    imageUploadAPI.addImage(imageUpload);
+    bool success = await(imageUploadAPI.addImage(imageUpload));
+
+    setState(() {
+      if(success == true)
+        print("Success");
+    });
   }
 
   @override
@@ -232,74 +242,78 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                 ),
                 child: Form(
                   key: _form_key,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      //the form 
-                      SizedBox(height: 30.0),
-                      _buildFieldImageUrl(),
-                      SizedBox(height: 30.0),
-                      _buildFieldName(),
-                      SizedBox(height: 30.0),
-                      _buildDropDownListOfColor(),
-                      SizedBox(height: 30.0),
-                      SizedBox(height: 30.0),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            RaisedButton(
-                              color: Colors.yellow[400],
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 16.0, horizontal: 24.0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(color: Colors.blueAccent)),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              elevation: 4.0,
-                              splashColor: Colors.blueGrey,
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16.0,
-                                  fontFamily: 'FredokaOne-Regular',
+                  child: SingleChildScrollView(//wrap the form to a signgle scroll down view
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        //the form
+                        SizedBox(height: 30.0),
+                        _buildFieldImageUrl(),
+                        SizedBox(height: 30.0),
+                        _buildFieldName(),
+                        SizedBox(height: 30.0),
+                        _buildDropDownListOfColor(),
+                        SizedBox(height: 30.0),
+                        SizedBox(height: 30.0),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              RaisedButton(
+                                color: Colors.yellow[400],
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 16.0, horizontal: 24.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(color: Colors.blueAccent)),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                elevation: 4.0,
+                                splashColor: Colors.blueGrey,
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'FredokaOne-Regular',
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 30.0),
-                            RaisedButton(
-                              color: Colors.lightBlueAccent,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 16.0, horizontal: 24.0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(color: Colors.blueAccent)),
-                              onPressed: () {
-                                if (!_form_key.currentState.validate()) {
-                                  return;
-                                }
-                                _form_key.currentState.save();
+                              SizedBox(width: 30.0),
+                              RaisedButton(
+                                
+                                color: Colors.lightBlueAccent,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 16.0, horizontal: 24.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(color: Colors.blueAccent)),
+                                onPressed: () {
+                                  if (!_form_key.currentState.validate()) {
+                                    return;
+                                  }
+                                  _form_key.currentState.save();
 
-                                uploadPicture(context);
+                                  uploadPicture(context);
 
-                                if(_success == true)
-                                  saveToDatabase();
-                              },
-                              elevation: 4.0,
-                              splashColor: Colors.blueGrey,
-                              child: Text(
-                                'Submit',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16.0,
-                                  fontFamily: 'FredokaOne-Regular',
+                                  if (_success == true) {
+                                    saveToDatabase();
+                                  }
+                                },
+                                elevation: 4.0,
+                                splashColor: Colors.blueGrey,
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16.0,
+                                    fontFamily: 'FredokaOne-Regular',
+                                  ),
                                 ),
                               ),
-                            ),
-                          ]),
-                    ],
+                            ]),
+                      ],
+                    ),
                   ),
                 ))),
       ),
