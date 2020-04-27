@@ -223,7 +223,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           leading: IconButton(
             icon: Icon(FontAwesomeIcons.arrowLeft),
             onPressed: () {
-              //Navigator.pop(context);
+              Navigator.pop(context);
             },
           ),
           title: Text(

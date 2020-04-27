@@ -1,3 +1,5 @@
+import 'package:abcd/imageUpload/imageUploadPage.dart';
+import 'package:abcd/imageUpload/updateImage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'imageUploadAPI.dart';
@@ -91,7 +93,10 @@ class _ImgeListViewPage extends State<ImageListView> {
                   },
                 ),
                 onTap: () {
-                  //setUpdateUI(user);
+                  var route = new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          new update(imageUpload: imageUpload));
+                  Navigator.of(context).push(route);
                 },
               ),
               SizedBox(
@@ -119,6 +124,8 @@ class _ImgeListViewPage extends State<ImageListView> {
           ),
           padding: EdgeInsets.all(20.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: 30.0),
               RichText(
@@ -139,12 +146,22 @@ class _ImgeListViewPage extends State<ImageListView> {
                       ),
                     ),
                   ])),
-              SizedBox(height: 30.0),
+              SizedBox(height: 30.0, width: 350),
               Flexible(
                 child: buildBody(context),
               ),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.pink[900],
+          onPressed: () {
+            var route = new MaterialPageRoute(
+              builder: (BuildContext context) => new ImageUploadPage(),
+            );
+            Navigator.of(context).push(route);
+          },
+          child: Icon(Icons.add),
         ),
       ),
     );
