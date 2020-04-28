@@ -95,7 +95,7 @@ class _ImgeListViewPage extends State<ImageListView> {
                 onTap: () {
                   var route = new MaterialPageRoute(
                       builder: (BuildContext context) =>
-                          new update(imageUpload: imageUpload));
+                          new ImageUploadPage(imageUpload: imageUpload));
                   Navigator.of(context).push(route);
                 },
               ),

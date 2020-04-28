@@ -1,6 +1,4 @@
-import 'package:abcd/imageUpload/imageUploadPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'imageUpload.dart';
 
 class ImageUploadAPI {
@@ -17,8 +15,6 @@ class ImageUploadAPI {
     
     imageUpload.setAlphabetLetter(imageUploadObj.alphabetLetter);
 
-    print("print" + imageUploadObj.name);
-    print("print" + imageUploadObj.alphabetLetter);
     try{
       Firestore.instance.runTransaction(
             (Transaction transaction) async{
@@ -35,11 +31,12 @@ class ImageUploadAPI {
     }
   }
 
-  update(ImageUpload imageUpload, String newName){
+  update(ImageUpload imageUpload, ImageUpload currImageUpload){
     try{
       Firestore.instance.runTransaction((transaction) async{
-        await transaction.update(imageUpload.reference, {'name': newName});
+        await transaction.update(imageUpload.reference, {'alphabet_letter':currImageUpload.alphabetLetter, 'name':currImageUpload.name, 'image_url':currImageUpload.imageUrl, 'word_color':currImageUpload.color});
       });
+      print(currImageUpload.name);
     } catch(e){
       print(e.toString());
     }

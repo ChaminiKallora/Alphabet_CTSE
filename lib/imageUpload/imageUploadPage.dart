@@ -5,10 +5,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'imageUploadAPI.dart';
 import 'imageUpload.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:getflutter/getflutter.dart';
 
 class ImageUploadPage extends StatefulWidget {
+  final ImageUpload imageUpload;
+
+  ImageUploadPage({Key key, this.imageUpload}) : super(key: key);
+
   @override
   _ImgeUploadPageState createState() => _ImgeUploadPageState();
 }
@@ -21,7 +23,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
   File _image;
 
   //the url of uploaded iamge
-  String _firebase_image_url;
+  String _firebase_image_url =
+      "https://firebasestorage.googleapis.com/v0/b/ctse-abcd.appspot.com/o/camera.png?alt=media&token=b3a743aa-c361-4b36-8ade-345e126a12fd";
 
   //nam of the image
   String _name;
@@ -44,6 +47,11 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
   Widget _buildFieldName() {
     //designing text field of image name
     return TextFormField(
+      initialValue: widget.imageUpload != null &&
+              widget.imageUpload.name.isNotEmpty &&
+              widget.imageUpload.name != null
+          ? widget.imageUpload.name
+          : '',
       focusNode: _imageUploadFocusNode,
       textAlign: TextAlign.center,
       decoration: InputDecoration(
@@ -99,6 +107,13 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       onChanged: (String newColorOfWord) {
         setState(() {
           _colorOfWord = newColorOfWord; //change the color on change
+
+          if (widget.imageUpload != null &&
+              widget.imageUpload.color != null &&
+              widget.imageUpload.color.isNotEmpty) {
+            _colorOfWord = widget.imageUpload.color;
+            widget.imageUpload.color = null;
+          }
         });
       },
       items: _colorsList.map((String color) {
@@ -107,7 +122,11 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           child: Text(color),
         );
       }).toList(),
-      value: _colorOfWord,
+      value: widget.imageUpload != null &&
+              widget.imageUpload.color != null &&
+              widget.imageUpload.color.isNotEmpty
+          ? widget.imageUpload.color
+          : _colorOfWord,
       iconSize: 24,
       elevation: 16,
       icon: Icon(
@@ -120,31 +139,43 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
           color: Colors.black), //imported font family
       underline: Container(
         height: 5,
-        color: getColor(
-            _colorOfWord), //change color according to the user selectedS
+        color: widget.imageUpload != null &&
+                widget.imageUpload.color != null &&
+                widget.imageUpload.color.isNotEmpty
+            ? getColor(widget.imageUpload.color)
+            : getColor(
+                _colorOfWord), //change color according to the user selectedS
       ),
     );
   }
 
   //manage the design of the upload image
   Widget _buildFieldImageUrl() {
+    if (widget.imageUpload != null &&
+        widget.imageUpload.imageUrl != null &&
+        widget.imageUpload.imageUrl.isNotEmpty) {
+      _firebase_image_url = widget.imageUpload.imageUrl;
+    }
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Align(
         alignment: Alignment.center,
         child: InkWell(
-          onTap: () => getImage(),
-          child: (_image != null)
-              ? SizedBox(
-                  //if the iamge is already chosen
-                  width: 200.0,
-                  height: 250.0,
-                  child: Image.file(_image, fit: BoxFit.fill))
-              : Image.network(
-                  //if the image is not already chosen
-                  "https://firebasestorage.googleapis.com/v0/b/ctse-abcd.appspot.com/o/camera.png?alt=media&token=b3a743aa-c361-4b36-8ade-345e126a12fd",
-                  fit: BoxFit.fill,
-                ),
-        ),
+            onTap: () => getImage(),
+            child: (_image != null)
+                ? SizedBox(
+                    //if the iamge is already chosen
+                    width: 200.0,
+                    height: 250.0,
+                    child: Image.file(_image, fit: BoxFit.fill))
+                : SizedBox(
+                    width: 200.0,
+                    height: 250.0,
+                    child: Image.network(
+                      //if the image is not already chosen
+                      _firebase_image_url,
+                      fit: BoxFit.fill,
+                    ),
+                  )),
       ),
     ]));
   }
@@ -176,33 +207,36 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     //get the uploaded image url
     var image_url = await (await uploadTask.onComplete).ref.getDownloadURL();
     _firebase_image_url = image_url.toString();
+    print(_firebase_image_url);
 
     //upload the image to firebase storage
-    imageUploadAPI.addImage(image_url);
+    //imageUploadAPI.addImage(image_url);
 
-    //success msg
-    setState(() {
-      print("Profile Picture uploaded");
-      _success = true;
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Profile Picture Uploaded')));
-    });
+    
   }
 
   //save ti db by calling api class
-  Future saveToDatabase() async{ 
+  Future saveToDatabase(BuildContext context) async {
+    bool success;
     ImageUpload imageUpload = new ImageUpload();
+
+    if(_image != null)
+      await uploadPicture(context);
 
     imageUpload.name = _name;
     imageUpload.alphabetLetter = _letter;
     imageUpload.color = _colorOfWord;
     imageUpload.imageUrl = _firebase_image_url;
 
-    bool success = await(imageUploadAPI.addImage(imageUpload));
+    if ( widget.imageUpload != null ){
+      print('hi');
+      await (imageUploadAPI.update( widget.imageUpload, imageUpload));
+    }
+    else
+      success = await (imageUploadAPI.addImage(imageUpload));
 
     setState(() {
-      if(success == true)
-        print("Success");
+      if (success == true) print("Success");
     });
   }
 
@@ -226,11 +260,15 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
               Navigator.pop(context);
             },
           ),
-          title: Text(
-            'Add Image',
-            style:
-                TextStyle(fontFamily: 'PermanentMarker'), //imported font family
-          ),
+          title: widget.imageUpload != null
+              ? Text(
+                  'Update Image Details',
+                  style: TextStyle(fontFamily: 'PermanentMarker'),
+                ) //imported font family
+              : Text(
+                  'Add Image',
+                  style: TextStyle(fontFamily: 'PermanentMarker'),
+                ),
         ),
         body: Builder(
             builder: (context) => Container(
@@ -242,7 +280,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                 ),
                 child: Form(
                   key: _form_key,
-                  child: SingleChildScrollView(//wrap the form to a signgle scroll down view
+                  child: SingleChildScrollView(
+                    //wrap the form to a signgle scroll down view
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -281,7 +320,6 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                               ),
                               SizedBox(width: 30.0),
                               RaisedButton(
-                                
                                 color: Colors.lightBlueAccent,
                                 padding: EdgeInsets.symmetric(
                                     vertical: 16.0, horizontal: 24.0),
@@ -294,10 +332,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                                   }
                                   _form_key.currentState.save();
 
-                                  uploadPicture(context);
-
                                   if (_success == true) {
-                                    saveToDatabase();
+                                    saveToDatabase(context);
                                   }
                                 },
                                 elevation: 4.0,
