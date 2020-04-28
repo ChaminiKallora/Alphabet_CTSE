@@ -1,3 +1,4 @@
+import 'package:abcd/imageUpload/imageListView.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'imageUploadAPI.dart';
 import 'imageUpload.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ImageUploadPage extends StatefulWidget {
   final ImageUpload imageUpload;
@@ -101,6 +103,13 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
       else if (colorOfWord == 'black') return Colors.black;
     }
 
+    //save excisting color to _colorOfWord
+    if (widget.imageUpload != null &&
+        widget.imageUpload.color != null &&
+        widget.imageUpload.color.isNotEmpty) {
+      _colorOfWord = widget.imageUpload.color;
+    }
+
     return DropdownButton<String>(
       isExpanded: false,
       hint: Text('Color of the word'),
@@ -180,6 +189,64 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     ]));
   }
 
+  //update confirmation alert box
+  _updateConfirmationDialogBox(BuildContext context, ImageUpload imageUpload) {
+    return showDialog( //
+        context: context,
+        barrierDismissible: true,
+        builder: (param) {
+          return AlertDialog( // retunr a dialog box
+            actions: <Widget>[
+              FlatButton(
+                padding: EdgeInsets.all(15.0),
+                shape: RoundedRectangleBorder( //shape of the dialog box
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                color: Colors.pink[300],
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle( // set style for the text
+                      fontFamily: 'FredokaOne-Regular',
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+              ),
+              FlatButton( // design cancel flat button
+                padding: EdgeInsets.all(15.0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                color: Colors.cyan,
+                onPressed: () async {
+                  await (imageUploadAPI.update(
+                      widget.imageUpload, imageUpload));
+                  var route = new MaterialPageRoute(
+                      builder: (BuildContext context) => new ImageListView());
+                  Navigator.of(context).push(route);
+                },
+                child: Text( // design update flat button
+                  'Update',
+                  style: TextStyle(
+                      fontFamily: 'FredokaOne-Regular',
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+              ),
+            ],
+            title: Text(//alert box message
+              'Do you want to update the image ?',
+              style: TextStyle(//text style of alert box message
+                  fontFamily: 'FredokaOne-Regular',
+                  fontSize: 20,
+                  color: Colors.black),
+            ),
+            backgroundColor: Colors.purple[100], 
+            shape: RoundedRectangleBorder(//shape of the alert box
+                borderRadius: BorderRadius.all(Radius.circular(30.0))),
+            contentPadding: EdgeInsets.all(10.0),
+          );
+        });
+  }
+
   //take the image from the gallery
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -208,11 +275,6 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     var image_url = await (await uploadTask.onComplete).ref.getDownloadURL();
     _firebase_image_url = image_url.toString();
     print(_firebase_image_url);
-
-    //upload the image to firebase storage
-    //imageUploadAPI.addImage(image_url);
-
-    
   }
 
   //save ti db by calling api class
@@ -220,24 +282,44 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     bool success;
     ImageUpload imageUpload = new ImageUpload();
 
-    if(_image != null)
-      await uploadPicture(context);
+    if (_image != null) await uploadPicture(context);
 
     imageUpload.name = _name;
     imageUpload.alphabetLetter = _letter;
     imageUpload.color = _colorOfWord;
     imageUpload.imageUrl = _firebase_image_url;
 
-    if ( widget.imageUpload != null ){
-      print('hi');
-      await (imageUploadAPI.update( widget.imageUpload, imageUpload));
-    }
-    else
+    if (widget.imageUpload != null) {
+      //call the alert box for confirmation
+      _updateConfirmationDialogBox(context, imageUpload);
+    } else {
+      //call the add iamge method in api
       success = await (imageUploadAPI.addImage(imageUpload));
 
-    setState(() {
-      if (success == true) print("Success");
-    });
+      //if success show a toast
+      if (success == true) {
+        Fluttertoast.showToast(
+            msg: "Image added successfully.",
+            toastLength: Toast.LENGTH_LONG,
+            gravity:
+                ToastGravity.CENTER, //get the toast to the center of the screen
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 20);
+      } else {
+        //if not success show an error with a toast
+        Fluttertoast.showToast(
+            msg: "Unsuccessfull.",
+            toastLength: Toast.LENGTH_LONG,
+            gravity:
+                ToastGravity.CENTER, //get the toast to the center of the screen
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 20);
+      }
+    }
   }
 
   @override
@@ -327,7 +409,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                                     borderRadius: BorderRadius.circular(20),
                                     side: BorderSide(color: Colors.blueAccent)),
                                 onPressed: () {
-                                  if (!_form_key.currentState.validate()) {
+                                  if (!_form_key.currentState.validate()) {//check the validity of the form
                                     return;
                                   }
                                   _form_key.currentState.save();
@@ -339,7 +421,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                                 elevation: 4.0,
                                 splashColor: Colors.blueGrey,
                                 child: Text(
-                                  'Submit',
+                                  //choose the button text
+                                  widget.imageUpload != null && widget.imageUpload.name.isNotEmpty ? "Update" : 'Submit',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16.0,

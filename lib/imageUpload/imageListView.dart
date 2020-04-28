@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'imageUploadAPI.dart';
 import 'imageUpload.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ImageListView extends StatefulWidget {
   @override
@@ -30,6 +31,81 @@ class _ImgeListViewPage extends State<ImageListView> {
         return CircularProgressIndicator();
       },
     );
+  }
+
+  _deleteConfirmationDialogBox(BuildContext context, ImageUpload imageUpload) {
+    return showDialog(
+        //
+        context: context,
+        barrierDismissible: true,
+        builder: (param) {
+          return AlertDialog(
+            // retunr a dialog box
+            actions: <Widget>[
+              FlatButton(
+                padding: EdgeInsets.all(15.0),
+                shape: RoundedRectangleBorder(
+                    //shape of the dialog box
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                color: Colors.green[300],
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                      // set style for the text
+                      fontFamily: 'FredokaOne-Regular',
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+              ),
+              FlatButton(
+                // design cancel flat button
+                padding: EdgeInsets.all(15.0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                color: Colors.red[400],
+                onPressed: () async {
+                  _imageUploadAPI.delete(imageUpload);
+
+                  //show success message by a toast
+                  Fluttertoast.showToast(
+                      msg: "Image deleted successfully.",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity
+                          .CENTER, //get the toast to the center of the screen
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: 20);
+
+                      Navigator.pop(context);
+                },
+                child: Text(
+                  // design update flat button
+                  'Delete',
+                  style: TextStyle(
+                      fontFamily: 'FredokaOne-Regular',
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+              ),
+            ],
+            title: Text(
+              //alert box message
+              'Do you want to update the image ?',
+              style: TextStyle(
+                  //text style of alert box message
+                  fontFamily: 'FredokaOne-Regular',
+                  fontSize: 20,
+                  color: Colors.black),
+            ),
+            backgroundColor: Colors.purple[100],
+            shape: RoundedRectangleBorder(
+                //shape of the alert box
+                borderRadius: BorderRadius.all(Radius.circular(30.0))),
+            contentPadding: EdgeInsets.all(10.0),
+          );
+        });
   }
 
   Widget buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
@@ -89,10 +165,12 @@ class _ImgeListViewPage extends State<ImageListView> {
                 trailing: IconButton(
                   icon: Icon(Icons.delete),
                   onPressed: () {
-                    _imageUploadAPI.delete(imageUpload); //delete the image
+                    //call delete the image confirmation dialog box
+                    _deleteConfirmationDialogBox(context, imageUpload);
                   },
                 ),
                 onTap: () {
+                  //forward to image update page
                   var route = new MaterialPageRoute(
                       builder: (BuildContext context) =>
                           new ImageUploadPage(imageUpload: imageUpload));
