@@ -15,14 +15,14 @@ class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen>{
 
   void initState(){
     super.initState();
-    Timer(Duration(seconds: 5), () =>  Navigator.of(context).push(route));//direct to the ImageListView Page after 5 seconds
+    Timer(Duration(seconds: 2), () =>  Navigator.of(context).push(route));//direct to the ImageListView Page after 5 seconds
   }
 
   //build the splash screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[300],
+      backgroundColor: Colors.yellow,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(

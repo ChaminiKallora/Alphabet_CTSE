@@ -113,10 +113,10 @@ class _ImgeListViewPage extends State<ImageListView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color.fromARGB(150, 180, 170, 255),
+        backgroundColor: Colors.yellow,
         body: Container(
           decoration: BoxDecoration(
-            color: Color.fromARGB(150, 180, 170, 255),
+            color: Colors.yellow,
             image: DecorationImage(
               image: AssetImage("assets/images/rainbow.jpg"), //background image
               fit: BoxFit.fill,
