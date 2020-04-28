@@ -91,7 +91,7 @@ class _ImgeListViewPage extends State<ImageListView> {
             ],
             title: Text(
               //alert box message
-              'Do you want to update the image ?',
+              'Do you want to delete the image ?',
               style: TextStyle(
                   //text style of alert box message
                   fontFamily: 'FredokaOne-Regular',
