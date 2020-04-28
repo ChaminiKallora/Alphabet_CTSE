@@ -215,11 +215,19 @@ class _ImgeListViewPage extends State<ImageListView> {
                       ),
                       children: [
                     TextSpan(
-                      text: ' Alphabet',
+                      text: ' English',
                       style: TextStyle(
                         fontSize: 25,
                         fontFamily: 'FredokaOne-Regular',
                         color: Colors.green,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' Words',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'FredokaOne-Regular',
+                        color: Colors.blue,
                       ),
                     ),
                   ])),
