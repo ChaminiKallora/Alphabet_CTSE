@@ -219,6 +219,17 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                 onPressed: () async {
                   await (imageUploadAPI.update(
                       widget.imageUpload, imageUpload));
+
+                  Fluttertoast.showToast(
+                      msg: "Image Updated successfully.",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity
+                          .CENTER, //get the toast to the center of the screen
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: 20);
+
                   var route = new MaterialPageRoute(
                       builder: (BuildContext context) => new ImageListView());
                   Navigator.of(context).push(route);
