@@ -13,6 +13,7 @@ class ImageListView extends StatefulWidget {
 class _ImgeListViewPage extends State<ImageListView> {
   ImageUploadAPI _imageUploadAPI = new ImageUploadAPI();
 
+  //Load the data from firebase
   Widget buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance
@@ -32,6 +33,7 @@ class _ImgeListViewPage extends State<ImageListView> {
     );
   }
 
+  //delete confirmation dialog box
   _deleteConfirmationDialogBox(BuildContext context, ImageUpload imageUpload) {
     return showDialog(
         //
@@ -77,7 +79,7 @@ class _ImgeListViewPage extends State<ImageListView> {
                       textColor: Colors.white,
                       fontSize: 20);
 
-                      Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 child: Text(
                   // design update flat button
@@ -107,15 +109,18 @@ class _ImgeListViewPage extends State<ImageListView> {
         });
   }
 
+  //List of images imported
   Widget buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
       children: snapshot.map((data) => buildListItem(context, data)).toList(),
     );
   }
 
+  //build card for individual images
   Card buildListItem(BuildContext context, DocumentSnapshot data) {
     final imageUpload = ImageUpload.fromSnapshot(data);
 
+    //get the color according to the user input
     Color getColor(colorOfWord) {
       if (colorOfWord == 'blue')
         return Colors.blue;
@@ -186,6 +191,7 @@ class _ImgeListViewPage extends State<ImageListView> {
     );
   }
 
+  //create the image list page
   @override
   Widget build(BuildContext context) {
     return SafeArea(

@@ -191,27 +191,32 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
 
   //update confirmation alert box
   _updateConfirmationDialogBox(BuildContext context, ImageUpload imageUpload) {
-    return showDialog( //
+    return showDialog(
+        //
         context: context,
         barrierDismissible: true,
         builder: (param) {
-          return AlertDialog( // retunr a dialog box
+          return AlertDialog(
+            // retunr a dialog box
             actions: <Widget>[
               FlatButton(
                 padding: EdgeInsets.all(15.0),
-                shape: RoundedRectangleBorder( //shape of the dialog box
+                shape: RoundedRectangleBorder(
+                    //shape of the dialog box
                     borderRadius: BorderRadius.all(Radius.circular(30.0))),
                 color: Colors.pink[300],
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Cancel',
-                  style: TextStyle( // set style for the text
+                  style: TextStyle(
+                      // set style for the text
                       fontFamily: 'FredokaOne-Regular',
                       fontSize: 20,
                       color: Colors.black),
                 ),
               ),
-              FlatButton( // design cancel flat button
+              FlatButton(
+                // design cancel flat button
                 padding: EdgeInsets.all(15.0),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(30.0))),
@@ -234,7 +239,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                       builder: (BuildContext context) => new ImageListView());
                   Navigator.of(context).push(route);
                 },
-                child: Text( // design update flat button
+                child: Text(
+                  // design update flat button
                   'Update',
                   style: TextStyle(
                       fontFamily: 'FredokaOne-Regular',
@@ -243,15 +249,18 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                 ),
               ),
             ],
-            title: Text(//alert box message
+            title: Text(
+              //alert box message
               'Do you want to update the image ?',
-              style: TextStyle(//text style of alert box message
+              style: TextStyle(
+                  //text style of alert box message
                   fontFamily: 'FredokaOne-Regular',
                   fontSize: 20,
                   color: Colors.black),
             ),
-            backgroundColor: Colors.purple[100], 
-            shape: RoundedRectangleBorder(//shape of the alert box
+            backgroundColor: Colors.purple[100],
+            shape: RoundedRectangleBorder(
+                //shape of the alert box
                 borderRadius: BorderRadius.all(Radius.circular(30.0))),
             contentPadding: EdgeInsets.all(10.0),
           );
@@ -288,7 +297,7 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
     print(_firebase_image_url);
   }
 
-  //save ti db by calling api class
+  //save to db by calling api class
   Future saveToDatabase(BuildContext context) async {
     bool success;
     ImageUpload imageUpload = new ImageUpload();
@@ -420,7 +429,8 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                                     borderRadius: BorderRadius.circular(20),
                                     side: BorderSide(color: Colors.blueAccent)),
                                 onPressed: () {
-                                  if (!_form_key.currentState.validate()) {//check the validity of the form
+                                  if (!_form_key.currentState.validate()) {
+                                    //check the validity of the form
                                     return;
                                   }
                                   _form_key.currentState.save();
@@ -433,7 +443,10 @@ class _ImgeUploadPageState extends State<ImageUploadPage> {
                                 splashColor: Colors.blueGrey,
                                 child: Text(
                                   //choose the button text
-                                  widget.imageUpload != null && widget.imageUpload.name.isNotEmpty ? "Update" : 'Submit',
+                                  widget.imageUpload != null &&
+                                          widget.imageUpload.name.isNotEmpty
+                                      ? "Update"
+                                      : 'Submit',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16.0,

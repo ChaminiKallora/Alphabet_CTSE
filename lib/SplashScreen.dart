@@ -9,13 +9,18 @@ class ABCDWelcomeSplashScreen extends StatefulWidget {
 }
 
 //splash screen
-class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen>{
+class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen> {
   //route
-  var route = new MaterialPageRoute(builder: (BuildContext context) => new ImageListView(), );
+  var route = new MaterialPageRoute(
+    builder: (BuildContext context) => new ImageListView(),
+  );
 
-  void initState(){
+  void initState() {
     super.initState();
-    Timer(Duration(seconds: 2), () =>  Navigator.of(context).push(route));//direct to the ImageListView Page after 5 seconds
+    Timer(
+        Duration(seconds: 2),
+        () => Navigator.of(context)
+            .push(route)); //direct to the ImageListView Page after 2 seconds
   }
 
   //build the splash screen
@@ -38,8 +43,9 @@ class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen>{
               child: AnimatedCrossFade(
                 alignment: Alignment.center,
                 firstChild: Container(
-                 // color: Colors.transparent,
-                  child: CircularProgressIndicator(),
+                  // color: Colors.transparent,
+                  child:
+                      CircularProgressIndicator(), //animated progress indicator in flutter
                   height: 200,
                   width: 200,
                 ),
@@ -67,12 +73,12 @@ class _ABCDWelcomeSplashScreenState extends State<ABCDWelcomeSplashScreen>{
                                 fontSize: 30,
                                 color: Colors.pink),
                           ),
-                          onPressed: () {
-                          }),
+                          onPressed: () {}),
                     ],
                   ),
                 ),
-                crossFadeState: CrossFadeState.showSecond, //display the second child
+                crossFadeState:
+                    CrossFadeState.showSecond, //display the second child
                 duration: Duration(milliseconds: 2000),
               ),
             ),
